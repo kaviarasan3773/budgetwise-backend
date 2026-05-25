@@ -2,6 +2,8 @@ package com.kaviarasan.budgetwise.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +15,7 @@ import com.kaviarasan.budgetwise.entity.Expense;
 import com.kaviarasan.budgetwise.entity.User;
 import com.kaviarasan.budgetwise.repository.ExpenseRepository;
 import com.kaviarasan.budgetwise.repository.UserRepository;
+import com.kaviarasan.budgetwise.security.SecurityUtil;
 
 @Service
 public class ExpenseService {
@@ -20,13 +23,13 @@ public class ExpenseService {
 
 	@Autowired
     private ExpenseRepository expenseRepository;
-
+    
     @Autowired
-    private UserRepository userRepository;
+    private SecurityUtil securityUtil;
 
     public String saveExpense(ExpenseRequest expenseRequest) {
 
-    	User loggedInUser = getCurrentLoggedInUser();
+    	User loggedInUser = securityUtil.getCurrentLoggedInUser();
 
         Expense expense = new Expense();
         expense.setTitle(expenseRequest.getTitle());
@@ -41,21 +44,22 @@ public class ExpenseService {
         return "Expense Saved Successfully";
     }
 
-	public List<ExpenseResponse> fetchExpenses() {
+    public List<ExpenseResponse> fetchExpenses() {
 
-		User loggedInUser = getCurrentLoggedInUser();
-		
-		List<ExpenseResponse> userExpenses =
-	            expenseRepository
-	                    .findByUser(loggedInUser);
-		return userExpenses;
-		
-	}
+        User loggedInUser =
+                securityUtil.getCurrentLoggedInUser();
 
+        List<Expense> userExpenses =
+                expenseRepository.findByUser(loggedInUser);
+
+        return userExpenses.stream()
+                .map(this::mapToExpenseResponse)
+                .collect(Collectors.toList());
+    }
 	
 	public String deleteExpense(Long expenseId) {
 
-		User loggedInUser = getCurrentLoggedInUser();
+		User loggedInUser = securityUtil.getCurrentLoggedInUser();
 
 	    Expense expense =expenseRepository.findById(expenseId)
 	                    .orElseThrow(() -> new RuntimeException("Expense not found"));
@@ -72,7 +76,7 @@ public class ExpenseService {
 	
 	public String updateExpense(ExpenseRequest expenseRequest,Long expenseId) {
 
-	    User loggedInUser = getCurrentLoggedInUser();
+	    User loggedInUser = securityUtil.getCurrentLoggedInUser();
 
 	    Expense expense =expenseRepository.findById(expenseId)
 	                    .orElseThrow(() ->new RuntimeException("Expense not found"));
@@ -105,16 +109,34 @@ public class ExpenseService {
 	    return "Expense updated successfully";
 	}
 	
-	private User getCurrentLoggedInUser() {
-		
-		Authentication authentication = SecurityContextHolder
-                .getContext().getAuthentication();
-		
-		String loggedInUserEmail = authentication.getName();
-		
-		User loggedInUser =userRepository.findByEmail(loggedInUserEmail)
-                .orElseThrow(() ->new RuntimeException("User not found"));
-		
-		return loggedInUser;
-	}
+	 private ExpenseResponse mapToExpenseResponse(Expense expense) {
+
+	        ExpenseResponse response =new ExpenseResponse();
+
+	        response.setExpenseId(
+	                expense.getExpenseId());
+
+	        response.setTitle(
+	                expense.getTitle());
+
+	        response.setAmount(
+	                expense.getAmount());
+
+	        response.setCategory(
+	                expense.getCategory());
+
+	        response.setExpenseDate(
+	                expense.getExpenseDate());
+
+	        response.setPaymentMode(
+	                expense.getPaymentMode());
+
+	        response.setNotes(
+	                expense.getNotes());
+
+	        response.setCreatedAt(
+	                expense.getCreatedAt());
+
+	        return response;
+	    }
 }

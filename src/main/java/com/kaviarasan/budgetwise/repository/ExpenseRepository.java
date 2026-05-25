@@ -11,6 +11,6 @@ import com.kaviarasan.budgetwise.entity.User;
 public interface ExpenseRepository
         extends JpaRepository<Expense, Long> {
 
-	List<ExpenseResponse> findByUser(User user);
+	List<Expense> findByUser(User user);
 
 }
