@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.kaviarasan.budgetwise.dto.ExpenseRequest;
@@ -14,7 +12,6 @@ import com.kaviarasan.budgetwise.dto.ExpenseResponse;
 import com.kaviarasan.budgetwise.entity.Expense;
 import com.kaviarasan.budgetwise.entity.User;
 import com.kaviarasan.budgetwise.repository.ExpenseRepository;
-import com.kaviarasan.budgetwise.repository.UserRepository;
 import com.kaviarasan.budgetwise.security.SecurityUtil;
 
 @Service

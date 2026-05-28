@@ -1,5 +1,6 @@
 package com.kaviarasan.budgetwise.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -30,7 +31,7 @@ public class Expense {
 
     private String title;
 
-    private double amount;
+    private BigDecimal amount;
 
     private String category;
 
@@ -43,6 +44,8 @@ public class Expense {
 
     // Date and time when record inserted into DB
     private LocalDateTime createdAt;
+    
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.kaviarasan.budgetwise.dto.SalaryResponse;
 import com.kaviarasan.budgetwise.entity.SalaryDetails;
 import com.kaviarasan.budgetwise.entity.User;
 

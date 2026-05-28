@@ -36,6 +36,7 @@ public class SalaryDetails {
 
     private BigDecimal inHandSalary;
 
+    private LocalDateTime updateAt;
 
     private LocalDateTime createdAt;
 

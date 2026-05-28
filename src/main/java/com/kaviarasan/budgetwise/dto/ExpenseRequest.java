@@ -1,5 +1,6 @@
 package com.kaviarasan.budgetwise.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import lombok.Getter;
@@ -11,7 +12,7 @@ public class ExpenseRequest {
 
     private String title;
 
-    private double amount;
+    private BigDecimal amount;
 
     private String category;
 
