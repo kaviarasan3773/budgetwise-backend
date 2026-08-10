@@ -1,22 +1,19 @@
 package com.kaviarasan.budgetwise.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ExpenseResponse {
-
-    private Long expenseId;
+@NoArgsConstructor
+@AllArgsConstructor
+public class ExpenseCategoryResponse {
 
     private String category;
 
     private BigDecimal amount;
-
-    private LocalDate expenseDate;
-
-    private String remarks;
 }

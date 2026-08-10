@@ -1,6 +1,7 @@
 package com.kaviarasan.budgetwise.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
@@ -16,29 +17,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "salary_details")
+@Table(name = "investment_details")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SalaryDetails {
+public class Investment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long salaryId;
+    private Long investmentId;
 
-    // Example format: 2026-05
-    private String salaryMonth;
+    private String investmentType;
 
-    private BigDecimal grossSalary;
+    private String investmentName;
 
-    private BigDecimal totalDeductions;
+    private BigDecimal amount;
 
-    private BigDecimal inHandSalary;
+    private LocalDate investmentDate;
 
-    private LocalDateTime updateAt;
+    private String remarks;
 
     private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

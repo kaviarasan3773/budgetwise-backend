@@ -1,6 +1,7 @@
 package com.kaviarasan.budgetwise.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +24,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String validateLogin(@RequestBody LoginRequest request) {
-        String validateUser = authService.validateUser(request);
-        return validateUser;
+    public ResponseEntity<String> validateLogin(
+            @RequestBody LoginRequest request) {
+
+        String token = authService.validateUser(request);
+
+        return ResponseEntity.ok(token);
     }
 }

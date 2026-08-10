@@ -11,129 +11,122 @@ import com.kaviarasan.budgetwise.dto.ExpenseRequest;
 import com.kaviarasan.budgetwise.dto.ExpenseResponse;
 import com.kaviarasan.budgetwise.entity.Expense;
 import com.kaviarasan.budgetwise.entity.User;
+import com.kaviarasan.budgetwise.exception.ExpenseNotFoundException;
+import com.kaviarasan.budgetwise.exception.UnauthorizedAccessException;
 import com.kaviarasan.budgetwise.repository.ExpenseRepository;
 import com.kaviarasan.budgetwise.security.SecurityUtil;
 
 @Service
 public class ExpenseService {
 
-
-	@Autowired
-    private ExpenseRepository expenseRepository;
-    
     @Autowired
     private SecurityUtil securityUtil;
 
-    public String saveExpense(ExpenseRequest expenseRequest) {
+    @Autowired
+    private ExpenseRepository expenseRepository;
 
-    	User loggedInUser = securityUtil.getCurrentLoggedInUser();
-
-        Expense expense = new Expense();
-        expense.setTitle(expenseRequest.getTitle());
-        expense.setAmount(expenseRequest.getAmount());
-        expense.setCategory(expenseRequest.getCategory());
-        expense.setExpenseDate(expenseRequest.getExpenseDate());
-        expense.setPaymentMode(expenseRequest.getPaymentMode());
-        expense.setNotes(expenseRequest.getNotes());
-        expense.setCreatedAt(LocalDateTime.now());
-        expense.setUser(loggedInUser);
-        expenseRepository.save(expense);
-        return "Expense Saved Successfully";
-    }
-
-    public List<ExpenseResponse> fetchExpenses() {
+    public void saveExpense(ExpenseRequest request) {
 
         User loggedInUser =
                 securityUtil.getCurrentLoggedInUser();
 
-        List<Expense> userExpenses =
-                expenseRepository.findByUser(loggedInUser);
+        Expense expense = new Expense();
 
-        return userExpenses.stream()
+        expense.setCategory(request.getCategory());
+        expense.setAmount(request.getAmount());
+        expense.setExpenseDate(request.getExpenseDate());
+        expense.setRemarks(request.getRemarks());
+        expense.setCreatedAt(LocalDateTime.now());
+        expense.setUser(loggedInUser);
+
+        expenseRepository.save(expense);
+    }
+
+    public List<ExpenseResponse> getAllExpenses() {
+
+        User loggedInUser =
+                securityUtil.getCurrentLoggedInUser();
+
+        List<Expense> expenses =
+                expenseRepository
+                        .findByUserOrderByExpenseDateDesc(loggedInUser);
+
+        return expenses.stream()
                 .map(this::mapToExpenseResponse)
                 .collect(Collectors.toList());
     }
-	
-	public String deleteExpense(Long expenseId) {
 
-		User loggedInUser = securityUtil.getCurrentLoggedInUser();
+    public void updateExpense(
+            ExpenseRequest request,
+            Long expenseId) {
 
-	    Expense expense =expenseRepository.findById(expenseId)
-	                    .orElseThrow(() -> new RuntimeException("Expense not found"));
+        User loggedInUser =
+                securityUtil.getCurrentLoggedInUser();
 
-	    if (!expense.getUser().getUserId()
-	            .equals(loggedInUser.getUserId())) {
-	        return "You are not authorized to delete this expense";
-	    }
+        Expense expense =
+                expenseRepository.findById(expenseId)
+                        .orElseThrow(() ->
+                                new ExpenseNotFoundException(
+                                        "Expense not found"));
 
-	    expenseRepository.delete(expense);
-	    return "Expense deleted successfully";
-	}
+        if (!expense.getUser().getUserId()
+                .equals(loggedInUser.getUserId())) {
 
-	
-	public String updateExpense(ExpenseRequest expenseRequest,Long expenseId) {
+            throw new UnauthorizedAccessException(
+                    "You are not authorized to update this expense");
+        }
 
-	    User loggedInUser = securityUtil.getCurrentLoggedInUser();
+        expense.setCategory(request.getCategory());
+        expense.setAmount(request.getAmount());
+        expense.setExpenseDate(request.getExpenseDate());
+        expense.setRemarks(request.getRemarks());
+        expense.setUpdatedAt(LocalDateTime.now());
 
-	    Expense expense =expenseRepository.findById(expenseId)
-	                    .orElseThrow(() ->new RuntimeException("Expense not found"));
+        expenseRepository.save(expense);
+    }
 
-	    if (!expense.getUser().getUserId()
-	            .equals(loggedInUser.getUserId())) {
-	        return "You are not authorized to update this expense";
-	    }
+    public void deleteExpense(Long expenseId) {
 
-	    expense.setTitle(
-	            expenseRequest.getTitle());
+        User loggedInUser =
+                securityUtil.getCurrentLoggedInUser();
 
-	    expense.setAmount(
-	            expenseRequest.getAmount());
+        Expense expense =
+                expenseRepository.findById(expenseId)
+                        .orElseThrow(() ->
+                                new ExpenseNotFoundException(
+                                        "Expense not found"));
 
-	    expense.setCategory(
-	            expenseRequest.getCategory());
+        if (!expense.getUser().getUserId()
+                .equals(loggedInUser.getUserId())) {
 
-	    expense.setExpenseDate(
-	            expenseRequest.getExpenseDate());
+            throw new UnauthorizedAccessException(
+                    "You are not authorized to delete this expense");
+        }
 
-	    expense.setPaymentMode(
-	            expenseRequest.getPaymentMode());
+        expenseRepository.delete(expense);
+    }
 
-	    expense.setNotes(
-	            expenseRequest.getNotes());
+    private ExpenseResponse mapToExpenseResponse(
+            Expense expense) {
 
-	    expenseRepository.save(expense);
+        ExpenseResponse response =
+                new ExpenseResponse();
 
-	    return "Expense updated successfully";
-	}
-	
-	 private ExpenseResponse mapToExpenseResponse(Expense expense) {
+        response.setExpenseId(
+                expense.getExpenseId());
 
-	        ExpenseResponse response =new ExpenseResponse();
+        response.setCategory(
+                expense.getCategory());
 
-	        response.setExpenseId(
-	                expense.getExpenseId());
+        response.setAmount(
+                expense.getAmount());
 
-	        response.setTitle(
-	                expense.getTitle());
+        response.setExpenseDate(
+                expense.getExpenseDate());
 
-	        response.setAmount(
-	                expense.getAmount());
+        response.setRemarks(
+                expense.getRemarks());
 
-	        response.setCategory(
-	                expense.getCategory());
-
-	        response.setExpenseDate(
-	                expense.getExpenseDate());
-
-	        response.setPaymentMode(
-	                expense.getPaymentMode());
-
-	        response.setNotes(
-	                expense.getNotes());
-
-	        response.setCreatedAt(
-	                expense.getCreatedAt());
-
-	        return response;
-	    }
+        return response;
+    }
 }

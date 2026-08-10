@@ -3,10 +3,12 @@ package com.kaviarasan.budgetwise.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 import com.kaviarasan.budgetwise.entity.User;
 import com.kaviarasan.budgetwise.repository.UserRepository;
 
+@Component
 public class SecurityUtil {
 	
 	 @Autowired

@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.kaviarasan.budgetwise.entity.Expense;
 import com.kaviarasan.budgetwise.entity.User;
 
-public interface ExpenseRepository
-        extends JpaRepository<Expense, Long> {
+public interface ExpenseRepository extends JpaRepository<Expense, Long> {
+
+    List<Expense> findByUserOrderByExpenseDateDesc(User user);
 
 	List<Expense> findByUser(User user);
 

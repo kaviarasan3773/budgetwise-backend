@@ -10,15 +10,11 @@ import lombok.Setter;
 @Setter
 public class ExpenseRequest {
 
-    private String title;
+    private String category;
 
     private BigDecimal amount;
 
-    private String category;
-
     private LocalDate expenseDate;
 
-    private String paymentMode;
-
-    private String notes;
+    private String remarks;
 }

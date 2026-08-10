@@ -20,16 +20,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @Column(nullable = false)
     private String userName;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String role;
 
+    @Column(nullable = false)
     private LocalDateTime createdDate;
 
+    @Column(nullable = false)
     private String status;
 
 }

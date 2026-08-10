@@ -8,15 +8,15 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ExpenseResponse {
+public class InvestmentRequest {
 
-    private Long expenseId;
+    private String investmentType;
 
-    private String category;
+    private String investmentName;
 
     private BigDecimal amount;
 
-    private LocalDate expenseDate;
+    private LocalDate investmentDate;
 
     private String remarks;
 }
